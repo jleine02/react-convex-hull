@@ -5,8 +5,6 @@ import {PlotContext} from "../../contexts/plot.context";
 
 import {
     CartesianGrid, ResponsiveContainer,
-    Line,
-    LineChart,
     Scatter,
     ScatterChart,
     XAxis,
@@ -14,7 +12,7 @@ import {
     Tooltip
 } from "recharts";
 
-const ChartJSCanvas = () => {
+const RechartCanvas = () => {
     const {plotPoints, hullPoints} = useContext(PlotContext);
     return (
         <div className="canvas-container">
@@ -29,8 +27,8 @@ const ChartJSCanvas = () => {
                     left: 30,
                 }}>
                 <CartesianGrid horizontal={false} vertical={false}/>
-                <XAxis type="number" dataKey="x" hide={true}/>
-                <YAxis type="number" dataKey="y" hide={true}/>
+                <XAxis type="number" dataKey="x" domain={[0, 100]} hide={true}/>
+                <YAxis type="number" dataKey="y" domain={[0, 100]} hide={true}/>
                 <Tooltip/>
                 <Scatter name="points" data={plotPoints} fill="blue"/>
                 <Scatter data={hullPoints} line={{stroke: 'red', strokeWidth: 2}} isAnimationActive={true} />
@@ -41,4 +39,4 @@ const ChartJSCanvas = () => {
     )
 };
 
-export default ChartJSCanvas;
+export default RechartCanvas;

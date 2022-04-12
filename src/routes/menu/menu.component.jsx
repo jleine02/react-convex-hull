@@ -40,13 +40,13 @@ const Menu = () => {
                 <h1>SELECT NUMBER OF POINTS FOR NEW PLOT</h1>
                 <Slider
                     name={"numberOfPoints"}
-                    defaultValue={10}
+                    defaultValue={50}
                     value={numberOfPoints}
                     onChange={handleSliderChange}
                     aria-label="Default"
                     valueLabelDisplay="on"
                     min={3}
-                    max={500}
+                    max={100}
                 />
                 <Box display="flex" justifyContent="space-between">
                     <Button variant={"contained"}
