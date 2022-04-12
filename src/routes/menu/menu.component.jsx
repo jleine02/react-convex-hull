@@ -3,46 +3,69 @@ import {Outlet} from 'react-router-dom';
 
 import {PlotContext} from "../../contexts/plot.context";
 
-import BasicButtonGroup
-    from "../../components/button-group/button-group.component";
-import {Button, Slider} from "@mui/material";
+import {
+    Button,
+    Slider,
+} from "@mui/material";
+import {Box} from "@material-ui/core";
+
 
 const DEFAULT_FORM_FIELDS = {
-    algorithm: 'NAIVE',
     numberOfPoints: 10,
 };
 
 const Menu = () => {
     const [formFields, setFormFields] = useState(DEFAULT_FORM_FIELDS);
-    const {algorithm, numberOfPoints} = formFields;
-    const {generatePoints} = useContext(PlotContext);
+    const {numberOfPoints} = formFields;
+    const {addPoint, generatePoints, showConvexHull} = useContext(PlotContext);
 
     const generateNewPoints = () => generatePoints(numberOfPoints);
+    const addNewPoint = () => addPoint();
+    const displayHull = () => showConvexHull();
 
     const handleSliderChange = (event) => {
         const {name, value} = event.target;
         setFormFields({...formFields, [name]: value});
     }
+    const handleNewPoint = (event) => {
+        const {name, value} = event.target;
+        const newValue = parseInt(value) + 1;
+        setFormFields({...formFields, [name]: newValue});
+        addNewPoint();
+    }
 
     return (
         <Fragment>
             <div className="menu-container">
-                <h1>SELECT AN ALGORITHM</h1>
-                <BasicButtonGroup
-                    name="algorithm"
-                    defaultValue={'NAIVE'}
-                />
-                <h1>SELECT NUMBER OF POINTS</h1>
+                <h1>SELECT NUMBER OF POINTS FOR NEW PLOT</h1>
                 <Slider
                     name={"numberOfPoints"}
                     defaultValue={10}
                     value={numberOfPoints}
                     onChange={handleSliderChange}
                     aria-label="Default"
-                    valueLabelDisplay="auto"
+                    valueLabelDisplay="on"
+                    min={3}
+                    max={500}
                 />
-                <Button variant={"contained"} onClick={generateNewPoints}>
-                    GENERATE NEW PLOT
+                <Box display="flex" justifyContent="space-between">
+                    <Button variant={"contained"}
+                            onClick={generateNewPoints}>
+                        GENERATE NEW SET OF POINTS
+                    </Button>
+                    <Button
+                        variant={"contained"}
+                        onClick={handleNewPoint}
+                        name={"numberOfPoints"}
+                        value={numberOfPoints}>
+                        ADD RANDOM POINT
+                    </Button>
+                </Box>
+                <br/>
+                <Button
+                    variant={"contained"}
+                    onClick={displayHull}>
+                    GENERATE NEW CONVEX HULL
                 </Button>
             </div>
             <Outlet/>

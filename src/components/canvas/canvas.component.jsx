@@ -8,16 +8,16 @@ import './canvas.styles.css';
 
 import {useContext} from "react";
 
-
 const Canvas = () => {
-    const {plotPoints} = useContext(PlotContext);
-    console.log(plotPoints);
+    const {plotPoints, hullPoints} = useContext(PlotContext);
+    console.log("plotPoints: ", plotPoints);
+    console.log("plotLines: ", hullPoints);
     const frameProps = {
         points: plotPoints,
-        // size: [window.innerWidth, window.innerHeight],
-        margin: 20,
+        // size: [window.outerWidth, window.outerHeight],
+        margin: 5,
         responsiveWidth: true,
-        responsiveHeight: true,
+        // responsiveHeight: true,
         xExtent: [0, 100],
         yExtent: [0, 100],
         xAccessor: "x",
@@ -27,7 +27,15 @@ const Canvas = () => {
                 r: 5,
                 fill: "blue"
             }
-        }
+        },
+        hoverAnnotation: true,
+        tooltipContent: d => {
+            return (
+                <p>({d.x}, {d.y})</p>
+            )
+        },
+        lines: {coordinates: hullPoints}
+        // axes: [{orient: "left"}, {orient: "bottom"}]
     };
 
     return (

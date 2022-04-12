@@ -1,6 +1,10 @@
 .canvas-container {
+    min-width: 500px;
+    min-height: 500px;
     width: 100%;
     height: 100%;
+    display: flex;
+    flex-wrap: wrap;
     justify-content: center;
     border-style: groove;
 }

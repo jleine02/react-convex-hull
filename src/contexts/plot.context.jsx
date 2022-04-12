@@ -4,55 +4,79 @@ import {createAction} from "../utils/reducer/reducer.utils";
 
 import exampleData from "../example-data";
 
-const getPoint = () => {
-    const x = Math.floor(Math.random() * (101) + 0);
-    const y = Math.floor(Math.random() * (101) + 0);
+const exampleHull = [
+    {x: 2, y: 78},
+    {x: 12, y: 15},
+    {x: 42, y: 1},
+    {x: 92, y: 27},
+    {x: 85, y: 66},
+    {x: 31, y: 98},
+    {x: 2, y: 78},
+]
+
+const setConvexHullCoords = (hullPoints, hullCoords) => {
+    hullPoints = [];
+    return [...hullPoints, ...hullCoords];
+}
+
+const getPoint = (isForNewPlot) => {
+    let marginOffset;
+    if (isForNewPlot) {
+        marginOffset = 10;
+    } else {
+        marginOffset = 0;
+    }
+    let max = 101 - marginOffset;
+    let min = 0 + marginOffset;
+    // console.log(isForNewPlot);
+    const x = Math.floor(Math.random() * (max - min) + marginOffset);
+    const y = Math.floor(Math.random() * (max - min) + marginOffset);
+    // console.log(isForNewPlot, marginOffset, x, y);
     return {
         "x": x,
         "y": y,
     };
 };
 
-const addPlotPoint = (plotPoints, pointToAdd) => {
-    const pointExists = plotPoints.find(
-        (plotPoint) =>
-            plotPoint.x === pointToAdd.x && plotPoint.y === pointToAdd.y
-    );
-    console.log(pointExists);
-    if (pointExists) {
-        addPlotPoint(plotPoints, getPoint());
-    };
-
-    return [...plotPoints, {...pointToAdd}];
+const addPlotPoint = (plotPoints, isForNewPlot) => {
+    while (true) {
+        const pointToAdd = getPoint(isForNewPlot);
+        console.log(pointToAdd);
+        const pointAtXYExists = plotPoints.find(
+        (plotPoint) => plotPoint.x === pointToAdd.x
+            && plotPoint.y === pointToAdd.y);
+        if (!pointAtXYExists) {
+            return [...plotPoints, {...pointToAdd}];
+        } else {
+            console.log("EXISTING POINT AT THOSE COORDS ALREADY EXISTS")
+        }
+    }
 };
 
+const resetHullPoints = (hullPoints) => {
+    hullPoints = [];
+    return [...hullPoints];
+}
+
 const generatePlotPoints = (plotPoints, numberOfPoints) => {
-    console.log(plotPoints);
     plotPoints = [];
-    console.log(plotPoints);
     for (let i=0; i < numberOfPoints; i++) {
-        plotPoints.push(getPoint());
+        plotPoints = addPlotPoint(plotPoints, true);
     };
     console.log(plotPoints);
+    plotPoints.sort((point1, point2) => (point1.x > point2.x) ? 1 : -1)
     return [...plotPoints];
 };
 
 
-// const movePlotPoint = (plotPoints, pointToAdd) => {
-//     return [...plotPoints, {...pointToAdd}];
-// };
-
-// const deletePlotPoint = (plotPoints, pointToRemove) => {
-//     plotPoints.filter((plotPoint) => plotPoint.id != pointToRemove.id);
-// };
-
 const PLOT_ACTION_TYPES = {
     SET_PLOT_POINTS: 'SET_PLOT_POINTS',
+    SHOW_CONVEX_HULL: 'SHOW_CONVEX_HULL',
 }
 
 const INITIAL_STATE = {
     plotPoints: exampleData,
-    plotLines: [],
+    hullPoints: [],
 }
 
 const plotReducer = (state, action) => {
@@ -64,6 +88,11 @@ const plotReducer = (state, action) => {
                 ...state,
                 ...payload,
             };
+        case PLOT_ACTION_TYPES.SHOW_CONVEX_HULL:
+            return {
+                ...state,
+                ...payload,
+            }
         default:
             throw new Error(`Unhandled type ${type} in plotReducer`);
     }
@@ -71,13 +100,15 @@ const plotReducer = (state, action) => {
 
 export const PlotContext = createContext({
     plotPoints: exampleData,
-    plotLines: [],
+    hullPoints: [],
     generatePoints: () => {},
     addPoint: () => {},
+    showConvexHull: () => {},
+    resetHullPoints: () => {},
 });
 
 export const PlotProvider = ({children}) => {
-    const [{plotPoints, plotLines}, dispatch] =
+    const [{plotPoints, hullPoints}, dispatch] =
         useReducer(plotReducer, INITIAL_STATE);
 
     const updatePlotPointsReducer = (plotPoints) => {
@@ -88,23 +119,39 @@ export const PlotProvider = ({children}) => {
         dispatch(createAction(PLOT_ACTION_TYPES.SET_PLOT_POINTS, payload));
     };
 
-    const generatePoints = (numberOfPoints) => {
-        const newPlotPoints = generatePlotPoints(plotPoints, numberOfPoints);
-        updatePlotPointsReducer(newPlotPoints);
+    const updateHullPointsReducer = (hullPoints) => {
+        const payload = {
+            hullPoints
+        };
+
+        dispatch(createAction(PLOT_ACTION_TYPES.SHOW_CONVEX_HULL, payload));
     };
 
-    const addPoint = (pointToAdd) => {
-        const newPlotPoints = addPlotPoint(plotPoints, pointToAdd);
+    const generatePoints = (numberOfPoints) => {
+        const newHullPoints = resetHullPoints(hullPoints);
+        const newPlotPoints = generatePlotPoints(plotPoints, numberOfPoints);
+        updatePlotPointsReducer(newPlotPoints);
+        updateHullPointsReducer(newHullPoints);
+    };
+
+    const addPoint = () => {
+        const newPlotPoints = addPlotPoint(plotPoints, false);
+        console.log(newPlotPoints);
         updatePlotPointsReducer(newPlotPoints);
     }
 
+    const showConvexHull = () => {
+        const newHullPoints = setConvexHullCoords(hullPoints, exampleHull);
+        updateHullPointsReducer(newHullPoints);
+    }
+
     const value = {
-        // isNewPlot,
         plotPoints,
-        plotLines,
-        // algorithmSelected,
+        hullPoints,
         generatePoints,
         addPoint,
+        showConvexHull,
+        resetHullPoints,
     };
 
     return <PlotContext.Provider
