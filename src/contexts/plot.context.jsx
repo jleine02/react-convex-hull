@@ -4,19 +4,10 @@ import {createAction} from "../utils/reducer/reducer.utils";
 
 import exampleData from "../example-data";
 
-const exampleHull = [
-    {x: 2, y: 78},
-    {x: 12, y: 15},
-    {x: 42, y: 1},
-    {x: 92, y: 27},
-    {x: 85, y: 66},
-    {x: 31, y: 98},
-    {x: 2, y: 78},
-]
 
-const setConvexHullCoords = (hullPoints, hullCoords) => {
+const setHullPoints = (hullPoints, newHullPoints) => {
     hullPoints = [];
-    return [...hullPoints, ...hullCoords];
+    return [...hullPoints, ...newHullPoints];
 }
 
 const getPoint = (isForNewPlot) => {
@@ -26,12 +17,13 @@ const getPoint = (isForNewPlot) => {
     } else {
         marginOffset = 0;
     }
+
     let max = 101 - marginOffset;
     let min = 0 + marginOffset;
-    // console.log(isForNewPlot);
+
     const x = Math.floor(Math.random() * (max - min) + marginOffset);
     const y = Math.floor(Math.random() * (max - min) + marginOffset);
-    // console.log(isForNewPlot, marginOffset, x, y);
+
     return {
         "x": x,
         "y": y,
@@ -41,10 +33,10 @@ const getPoint = (isForNewPlot) => {
 const addPlotPoint = (plotPoints, isForNewPlot) => {
     while (true) {
         const pointToAdd = getPoint(isForNewPlot);
-        console.log(pointToAdd);
         const pointAtXYExists = plotPoints.find(
         (plotPoint) => plotPoint.x === pointToAdd.x
             && plotPoint.y === pointToAdd.y);
+
         if (!pointAtXYExists) {
             return [...plotPoints, {...pointToAdd}];
         } else {
@@ -63,8 +55,7 @@ const generatePlotPoints = (plotPoints, numberOfPoints) => {
     for (let i=0; i < numberOfPoints; i++) {
         plotPoints = addPlotPoint(plotPoints, true);
     };
-    console.log(plotPoints);
-    plotPoints.sort((point1, point2) => (point1.x > point2.x) ? 1 : -1)
+    plotPoints.sort((point1, point2) => (point1.x > point2.x) ? 1 : -1);
     return [...plotPoints];
 };
 
@@ -103,7 +94,7 @@ export const PlotContext = createContext({
     hullPoints: [],
     generatePoints: () => {},
     addPoint: () => {},
-    showConvexHull: () => {},
+    setNewHullPoints: () => {},
     resetHullPoints: () => {},
 });
 
@@ -136,12 +127,11 @@ export const PlotProvider = ({children}) => {
 
     const addPoint = () => {
         const newPlotPoints = addPlotPoint(plotPoints, false);
-        console.log(newPlotPoints);
         updatePlotPointsReducer(newPlotPoints);
     }
 
-    const showConvexHull = () => {
-        const newHullPoints = setConvexHullCoords(hullPoints, exampleHull);
+    const setNewHullPoints = (currentHullPoints) => {
+        const newHullPoints = setHullPoints(currentHullPoints);
         updateHullPointsReducer(newHullPoints);
     }
 
@@ -150,7 +140,7 @@ export const PlotProvider = ({children}) => {
         hullPoints,
         generatePoints,
         addPoint,
-        showConvexHull,
+        setNewHullPoints,
         resetHullPoints,
     };
 

@@ -4,21 +4,18 @@ import {Outlet} from 'react-router-dom';
 import Canvas from "../../components/canvas/canvas.component";
 import RechartCanvas
     from "../../components/rechart-canvas/rechart-canvas.component";
+import DenseTable from "../../components/mui-table/mui-table.component";
 
 const Home = () => {
     return (
         <div>
             <div>
-                <h2>NAIVE</h2>
+                <h2>POINTS:</h2>
                 <RechartCanvas/>
             </div>
             <div>
-                <h2>GRAHAMSCAN</h2>
-                <RechartCanvas/>
-            </div>
-            <div>
-                <h2>OUTPUT AWARE</h2>
-                <RechartCanvas/>
+                <br/>
+                <DenseTable />
             </div>
             <Outlet/>
         </div>
