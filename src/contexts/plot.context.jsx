@@ -5,11 +5,6 @@ import {createAction} from "../utils/reducer/reducer.utils";
 import exampleData from "../example-data";
 
 
-const setHullPoints = (hullPoints, newHullPoints) => {
-    hullPoints = [];
-    return [...hullPoints, ...newHullPoints];
-}
-
 const getPoint = (isForNewPlot) => {
     let marginOffset;
     if (isForNewPlot) {
@@ -50,6 +45,11 @@ const resetHullPoints = (hullPoints) => {
     return [...hullPoints];
 }
 
+const addNewHullPoints = (hullPoints, newHullPoints) => {
+    hullPoints = [];
+    return [...hullPoints, ...newHullPoints];
+}
+
 const generatePlotPoints = (plotPoints, numberOfPoints) => {
     plotPoints = [];
     for (let i=0; i < numberOfPoints; i++) {
@@ -62,7 +62,7 @@ const generatePlotPoints = (plotPoints, numberOfPoints) => {
 
 const PLOT_ACTION_TYPES = {
     SET_PLOT_POINTS: 'SET_PLOT_POINTS',
-    SHOW_CONVEX_HULL: 'SHOW_CONVEX_HULL',
+    SET_HULL_POINTS: 'SET_HULL_POINTS',
 }
 
 const INITIAL_STATE = {
@@ -79,7 +79,7 @@ const plotReducer = (state, action) => {
                 ...state,
                 ...payload,
             };
-        case PLOT_ACTION_TYPES.SHOW_CONVEX_HULL:
+        case PLOT_ACTION_TYPES.SET_HULL_POINTS:
             return {
                 ...state,
                 ...payload,
@@ -94,7 +94,7 @@ export const PlotContext = createContext({
     hullPoints: [],
     generatePoints: () => {},
     addPoint: () => {},
-    setNewHullPoints: () => {},
+    addHullPoints: () => {},
     resetHullPoints: () => {},
 });
 
@@ -115,7 +115,7 @@ export const PlotProvider = ({children}) => {
             hullPoints
         };
 
-        dispatch(createAction(PLOT_ACTION_TYPES.SHOW_CONVEX_HULL, payload));
+        dispatch(createAction(PLOT_ACTION_TYPES.SET_HULL_POINTS, payload));
     };
 
     const generatePoints = (numberOfPoints) => {
@@ -130,8 +130,8 @@ export const PlotProvider = ({children}) => {
         updatePlotPointsReducer(newPlotPoints);
     }
 
-    const setNewHullPoints = (currentHullPoints) => {
-        const newHullPoints = setHullPoints(currentHullPoints);
+    const addHullPoints = (freshHullPoints) => {
+        const newHullPoints = addNewHullPoints(hullPoints, freshHullPoints);
         updateHullPointsReducer(newHullPoints);
     }
 
@@ -140,7 +140,7 @@ export const PlotProvider = ({children}) => {
         hullPoints,
         generatePoints,
         addPoint,
-        setNewHullPoints,
+        addHullPoints,
         resetHullPoints,
     };
 

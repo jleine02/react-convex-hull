@@ -23,11 +23,11 @@ const DenseTable = () => {
       <Table sx={{ minWidth: 650 }} size="small" aria-label="a dense table">
         <TableHead>
           <TableRow>
-            <TableCell>ALGORITHM</TableCell>
-            <TableCell align="right">NUMBER OF POINTS</TableCell>
-            <TableCell align="right">RUN TIME (SECONDS)</TableCell>
-            <TableCell align="right">ALL POINT COORDS</TableCell>
-            <TableCell align="right">CONVEX HULL COORDS</TableCell>
+            <TableCell><b>ALGORITHM</b></TableCell>
+            <TableCell align="right"><b>NUMBER OF POINTS</b></TableCell>
+            <TableCell align="right"><b>RUN TIME (SECONDS)</b></TableCell>
+            <TableCell align="right"><b>ALL POINT COORDS</b></TableCell>
+            <TableCell align="right"><b>CONVEX HULL COORDS</b></TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

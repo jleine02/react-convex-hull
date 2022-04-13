@@ -14,6 +14,7 @@ import {
 
 const RechartCanvas = () => {
     const {plotPoints, hullPoints} = useContext(PlotContext);
+
     return (
         <div className="canvas-container">
             <ResponsiveContainer width="100%" height={500}>

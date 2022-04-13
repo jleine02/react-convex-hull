@@ -18,15 +18,17 @@ const Menu = () => {
     const [formFields, setFormFields] = useState(DEFAULT_FORM_FIELDS);
     const {numberOfPoints} = formFields;
     const {
+        hullPoints,
         plotPoints,
         addPoint,
         generatePoints,
-        setNewHullPoints,
+        addHullPoints,
     } = useContext(PlotContext);
+    let newHullPoints;
 
     const generateNewPoints = () => generatePoints(numberOfPoints);
     const addNewPoint = () => addPoint();
-    const setConvexHull = () => setNewHullPoints();
+    const addNewHullPoints = () => addHullPoints(newHullPoints);
 
     const handleSliderChange = (event) => {
         const {name, value} = event.target;
@@ -41,7 +43,6 @@ const Menu = () => {
     }
 
     const handleConvexHullSubmit = async (event) => {
-        console.log(JSON.stringify(plotPoints));
         try {
             const response = await fetch("http://localhost:8000/api/submit-data", {
                 method: "POST",
@@ -51,11 +52,10 @@ const Menu = () => {
                 },
                 body: JSON.stringify(plotPoints),
             });
-            const body = await response.json();
-            const newHullPoints = JSON.parse(body);
-            setConvexHull(newHullPoints);
+            newHullPoints = await response.json();
+            addNewHullPoints(newHullPoints);
         } catch(error) {
-            alert('Error communicating with api');
+            // alert('Error communicating with api');
             console.error(error);
         }
     }
