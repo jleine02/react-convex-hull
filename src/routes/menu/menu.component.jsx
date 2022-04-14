@@ -11,7 +11,7 @@ import {Box} from "@material-ui/core";
 
 
 const DEFAULT_FORM_FIELDS = {
-    numberOfPoints: 10,
+    numberOfPoints: 13,
 };
 
 const Menu = () => {
@@ -66,7 +66,7 @@ const Menu = () => {
                 <h1>SELECT NUMBER OF POINTS FOR NEW PLOT</h1>
                 <Slider
                     name={"numberOfPoints"}
-                    defaultValue={50}
+                    defaultValue={13}
                     value={numberOfPoints}
                     onChange={handleSliderChange}
                     aria-label="Default"

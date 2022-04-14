@@ -27,12 +27,16 @@ const getPoint = (isForNewPlot) => {
 
 const addPlotPoint = (plotPoints, isForNewPlot) => {
     while (true) {
+        console.log(plotPoints, isForNewPlot)
         const pointToAdd = getPoint(isForNewPlot);
         const pointAtXYExists = plotPoints.find(
-        (plotPoint) => plotPoint.x === pointToAdd.x
-            && plotPoint.y === pointToAdd.y);
+            (plotPoint) => plotPoint.x === pointToAdd.x
+                && plotPoint.y === pointToAdd.y);
 
         if (!pointAtXYExists) {
+            if (!isForNewPlot) {
+                console.log(plotPoints.length)
+            }
             return [...plotPoints, {...pointToAdd}];
         } else {
             console.log("EXISTING POINT AT THOSE COORDS ALREADY EXISTS")
@@ -52,10 +56,12 @@ const addNewHullPoints = (hullPoints, newHullPoints) => {
 
 const generatePlotPoints = (plotPoints, numberOfPoints) => {
     plotPoints = [];
-    for (let i=0; i < numberOfPoints; i++) {
+    for (let i = 0; i < numberOfPoints; i++) {
         plotPoints = addPlotPoint(plotPoints, true);
-    };
+    }
+    ;
     plotPoints.sort((point1, point2) => (point1.x > point2.x) ? 1 : -1);
+    console.log(plotPoints.length, " vs ", numberOfPoints)
     return [...plotPoints];
 };
 
@@ -92,10 +98,14 @@ const plotReducer = (state, action) => {
 export const PlotContext = createContext({
     plotPoints: exampleData,
     hullPoints: [],
-    generatePoints: () => {},
-    addPoint: () => {},
-    addHullPoints: () => {},
-    resetHullPoints: () => {},
+    generatePoints: () => {
+    },
+    addPoint: () => {
+    },
+    addHullPoints: () => {
+    },
+    resetHullPoints: () => {
+    },
 });
 
 export const PlotProvider = ({children}) => {
@@ -118,15 +128,15 @@ export const PlotProvider = ({children}) => {
         dispatch(createAction(PLOT_ACTION_TYPES.SET_HULL_POINTS, payload));
     };
 
-    const generatePoints = (numberOfPoints) => {
-        const newHullPoints = resetHullPoints(hullPoints);
-        const newPlotPoints = generatePlotPoints(plotPoints, numberOfPoints);
+    const generatePoints = async (numberOfPoints) => {
+        const newHullPoints = await resetHullPoints(hullPoints);
+        const newPlotPoints = await generatePlotPoints(plotPoints, numberOfPoints);
         updatePlotPointsReducer(newPlotPoints);
         updateHullPointsReducer(newHullPoints);
     };
 
-    const addPoint = () => {
-        const newPlotPoints = addPlotPoint(plotPoints, false);
+    const addPoint = async() => {
+        const newPlotPoints = await addPlotPoint(plotPoints, false);
         updatePlotPointsReducer(newPlotPoints);
     }
 
